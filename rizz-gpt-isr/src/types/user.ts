@@ -1,4 +1,4 @@
-import { Timestamp } from "firebase/firestore";
+git push -u origin mainimport { Timestamp } from "firebase/firestore";
 
 export interface UserProfile {
   uid: string;
