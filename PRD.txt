@@ -1,0 +1,283 @@
+# Hebrew Dating Assistant - Product Requirements Document
+
+## 1. Executive Summary
+
+### Product Vision
+Create the first Hebrew-language AI-powered dating conversation assistant, helping Israeli users craft engaging messages and responses on dating platforms. Fill the market gap left by English-only competitors like PLUG.ai and RIZZ.ai.
+
+### Business Model
+- **Freemium**: Free tier with limited monthly tokens
+- **Premium Subscription**: Unlimited usage after token limit
+- **Ad Revenue**: Google AdSense integration for additional monetization
+
+### Target Market
+- Hebrew-speaking singles (primarily Israeli market)
+- Ages 18-45 using dating apps (Tinder, Bumble, etc.)
+- Tech-savvy users comfortable with AI assistance
+
+## 2. Market Analysis
+
+### Market Opportunity
+- **Underserved Market**: No Hebrew-specific dating AI assistants exist
+- **Growing Dating App Usage**: High smartphone penetration in Israel
+- **Language Barrier**: Existing tools (PLUG.ai, RIZZ.ai) don't support Hebrew cultural context
+
+### Competitive Landscape
+- **Direct Competitors**: None in Hebrew market
+- **Indirect Competitors**: PLUG.ai, RIZZ.ai (English only)
+- **Competitive Advantage**: First-mover in Hebrew market, cultural relevance
+
+## 3. Product Features
+
+### Core Features (MVP)
+1. **Message Generation**
+   - AI-powered conversation starters
+   - Reply suggestions based on context
+   - Tone customization (casual, romantic, humorous)
+
+2. **Hebrew Language Support**
+   - Native Hebrew text processing
+   - Cultural context awareness
+   - Israeli slang and expressions
+
+3. **Token-Based Usage**
+   - Free tier: 50 messages/month
+   - Token tracking and display
+   - Usage analytics for users
+
+4. **User Authentication**
+   - Email/phone registration
+   - Profile creation
+   - Usage history
+
+### Premium Features
+1. **Unlimited Messages**
+2. **Advanced Personality Matching**
+3. **Photo Analysis & Suggestions**
+4. **Priority Response Generation**
+5. **Export Conversation History**
+
+### Future Features (Roadmap)
+1. **Multi-platform Integration** (WhatsApp, Telegram)
+2. **Voice Message Suggestions**
+3. **Dating Profile Optimization**
+4. **Success Analytics & Tips**
+
+## 4. Technical Architecture
+
+### Frontend Technology Stack
+- **Framework**: Next.js 14+ (App Router)
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui or custom components
+- **State Management**: Zustand or React Context
+- **Design System**: Figma-based design tokens
+
+### Backend Technology Stack
+**Option A: Node.js Backend**
+- **Runtime**: Node.js with Express/Fastify
+- **Database**: PostgreSQL or MongoDB
+- **Authentication**: JWT with refresh tokens
+- **Hosting**: Vercel/Railway/Digital Ocean
+
+**Option B: Firebase Backend**
+- **Database**: Firestore
+- **Authentication**: Firebase Auth
+- **Functions**: Cloud Functions
+- **Hosting**: Firebase Hosting
+
+### AI Integration
+- **Primary Model**: GPT-4o Mini (cost-optimized)
+- **API**: OpenAI API
+- **Fallback**: GPT-3.5 Turbo for high-load scenarios
+- **Custom Prompting**: Hebrew-specific prompts with cultural context
+
+### Performance Optimization
+1. **Response Caching**
+   - Redis/Memory cache for common responses
+   - Cache key: message type + context hash
+   - 24-hour cache expiry for freshness
+
+2. **Token Management**
+   - Efficient prompt engineering
+   - Response length optimization
+   - Batch processing for multiple requests
+
+## 5. Monetization Strategy
+
+### Revenue Streams
+1. **Subscription Revenue** (Primary)
+   - Monthly: ₪29 ($8 USD)
+   - Annual: ₪299 ($85 USD, ~15% discount)
+   
+2. **Advertising Revenue** (Secondary)
+   - Google AdSense integration
+   - Display ads on free tier
+   - Native sponsored content
+
+### Pricing Strategy
+- **Free Tier**: 50 messages/month + ads
+- **Premium Tier**: Unlimited messages, no ads
+- **Token Top-ups**: ₪5 for 25 additional messages (emergency option)
+
+## 6. User Experience Design
+
+### Key User Flows
+1. **Onboarding**
+   - Welcome screen with value proposition
+   - Quick tutorial (3-4 screens)
+   - Registration/login
+   - First message generation
+
+2. **Message Generation**
+   - Paste/type conversation context
+   - Select message type (opener, reply, etc.)
+   - Choose tone/personality
+   - Generate and refine suggestions
+   - Copy to dating app
+
+3. **Token Management**
+   - Clear token counter display
+   - Usage warnings at 80% limit
+   - Smooth upgrade flow
+
+### Design Principles
+- **Hebrew-First**: RTL support, Hebrew typography
+- **Mobile-First**: Responsive design for phone usage
+- **Speed**: Fast generation (<3 seconds)
+- **Privacy**: Clear data handling messaging
+
+## 7. Technical Requirements
+
+### Performance Requirements
+- **Response Time**: <3 seconds for message generation
+- **Uptime**: 99.5% availability
+- **Scalability**: Handle 1000+ concurrent users
+- **Mobile Performance**: <2MB initial bundle size
+
+### Security & Privacy
+- **Data Encryption**: HTTPS, encrypted data storage
+- **Privacy Compliance**: GDPR compliance for EU users
+- **Content Moderation**: Filter inappropriate content
+- **Rate Limiting**: Prevent API abuse
+
+### Internationalization
+- **Primary Language**: Hebrew (RTL)
+- **Secondary**: English interface option
+- **Localization**: Israeli cultural references, holidays, etc.
+
+## 8. Marketing & Go-to-Market
+
+### Launch Strategy
+1. **Beta Testing** (50 users, 2 weeks)
+2. **Soft Launch** (Israel-focused social media)
+3. **Influencer Partnerships** (Dating coaches, lifestyle YouTubers)
+4. **App Store Optimization** (Hebrew keywords)
+
+### Marketing Channels
+- **Social Media**: Instagram, TikTok, YouTube
+- **Content Marketing**: Dating tips blog in Hebrew
+- **Paid Acquisition**: Google Ads, Facebook Ads
+- **Referral Program**: Free tokens for successful referrals
+
+## 9. Success Metrics
+
+### Key Performance Indicators (KPIs)
+- **User Acquisition**: Monthly active users (MAU)
+- **Engagement**: Messages generated per user
+- **Retention**: 7-day, 30-day retention rates
+- **Revenue**: Monthly recurring revenue (MRR)
+- **Conversion**: Free to paid conversion rate (target: 5-10%)
+
+### Success Thresholds (6 months)
+- **Users**: 5,000+ registered users
+- **Revenue**: ₪50,000+ MRR
+- **Retention**: 30% 30-day retention
+- **Satisfaction**: 4.5+ app store rating
+
+## 10. Development Timeline
+
+### Phase 1: MVP (8-10 weeks)
+**Weeks 1-2**: Setup & Architecture
+- Tech stack setup (Next.js + backend choice)
+- Database schema design
+- OpenAI API integration
+- Basic Hebrew prompt engineering
+
+**Weeks 3-5**: Core Features
+- User authentication
+- Message generation interface
+- Token system implementation
+- Basic caching system
+
+**Weeks 6-7**: UI/UX Implementation
+- Responsive design with Tailwind
+- Hebrew RTL support
+- Mobile optimization
+- Ad integration (AdSense)
+
+**Weeks 8-10**: Testing & Launch Prep
+- Beta testing with 50 users
+- Bug fixes and optimization
+- Analytics integration
+- App store submission
+
+### Phase 2: Growth Features (4-6 weeks)
+- Advanced personality matching
+- Improved caching system
+- User analytics dashboard
+- Referral system
+- Premium feature expansion
+
+### Phase 3: Scale & Optimize (Ongoing)
+- Performance optimization
+- Advanced AI features
+- International expansion
+- Partnership integrations
+
+## 11. Risk Assessment
+
+### Technical Risks
+- **API Costs**: GPT-4o Mini pricing changes
+- **Rate Limits**: OpenAI API limitations
+- **Hebrew Quality**: AI model Hebrew performance
+- **Mitigation**: Cost monitoring, fallback models, prompt optimization
+
+### Market Risks
+- **Competition**: Established players entering Hebrew market
+- **User Adoption**: Slower than expected uptake
+- **Regulation**: Dating app regulations in Israel
+- **Mitigation**: Fast execution, strong community building, legal compliance
+
+### Business Risks
+- **Unit Economics**: High AI costs vs. revenue
+- **Churn Rate**: High subscription cancellations
+- **Ad Revenue**: Lower than projected AdSense income
+- **Mitigation**: Pricing optimization, engagement features, diverse revenue streams
+
+## 12. Next Steps
+
+### Immediate Actions (Next 2 weeks)
+1. **Technical Setup**
+   - Set up development environment
+   - Create OpenAI API account and test Hebrew prompts
+   - Choose backend architecture (Node.js vs Firebase)
+   - Set up project repositories
+
+2. **Design & Planning**
+   - Create detailed wireframes in Figma
+   - Define Hebrew prompt templates
+   - Set up analytics and monitoring tools
+   - Plan beta user recruitment strategy
+
+3. **Business Setup**
+   - Register company/business entity
+   - Set up payment processing (for subscriptions)
+   - Apply for Google AdSense
+   - Create social media presence
+
+### Success Criteria for MVP Launch
+- Functional message generation in Hebrew
+- User registration and token system working
+- Mobile-responsive interface
+- Basic analytics tracking
+- 50+ beta users providing feedback

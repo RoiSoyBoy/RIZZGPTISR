@@ -1,0 +1,572 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Initialize Next.js 14 Project and Firebase Backend",
+        "description": "Set up the foundational project structure, including the Next.js frontend with RTL support and the Firebase backend for authentication, database, and functions, as outlined in the technical architecture.",
+        "details": "Initialize a new Next.js 14 project using the App Router: `npx create-next-app@latest --typescript --tailwind --eslint`. Configure Tailwind CSS for RTL by default. Set up a new Firebase project. Enable Firestore, Firebase Authentication (Email/Phone), and Cloud Functions. Install Firebase SDKs (`firebase` and `firebase-admin`). Configure environment variables (`.env.local`) for Firebase project credentials and OpenAI API keys.",
+        "testStrategy": "Verify that the Next.js application runs locally. Confirm successful connection to the Firebase project by fetching a test document from Firestore. Ensure Tailwind CSS correctly applies RTL styles.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Initialize Next.js 14 Project with TypeScript and Tailwind CSS",
+            "description": "Create the foundational Next.js 14 application using the App Router, configured with TypeScript, Tailwind CSS, and ESLint.",
+            "dependencies": [],
+            "details": "Execute the command `npx create-next-app@latest --typescript --tailwind --eslint` in the terminal. Follow the interactive prompts to set up the initial project structure and install the necessary dependencies.",
+            "status": "done",
+            "testStrategy": "Run `npm run dev` and verify that the default Next.js welcome page loads successfully at `http://localhost:3000` without any compilation errors."
+          },
+          {
+            "id": 2,
+            "title": "Configure Tailwind CSS for Default RTL Support",
+            "description": "Adjust the project's styling configuration to ensure that the layout and text direction are right-to-left (RTL) by default, catering to the Hebrew language.",
+            "dependencies": [
+              "1.1"
+            ],
+            "details": "Modify the root layout file (`app/layout.tsx`) to add `dir=\"rtl\"` to the `<html>` tag. Optionally, install and configure `tailwindcss-rtl` plugin in `tailwind.config.ts` to automatically generate RTL-aware utility classes.",
+            "status": "done",
+            "testStrategy": "Create a simple component with text and flexbox layout. Verify in the browser that the text is right-aligned and flex items are ordered from right to left."
+          },
+          {
+            "id": 3,
+            "title": "Set Up Firebase Project and Enable Core Services",
+            "description": "Create a new project in the Firebase console and activate the required backend services: Firestore, Authentication, and Cloud Functions.",
+            "dependencies": [],
+            "details": "Navigate to the Firebase console, create a new project. Within the project settings, enable Firestore Database (in test mode for initial development), enable Firebase Authentication with Email/Password and Phone providers, and initialize Cloud Functions.",
+            "status": "done",
+            "testStrategy": "Confirm within the Firebase console that the status for Firestore, Authentication, and Cloud Functions is shown as 'Enabled' for the project."
+          },
+          {
+            "id": 4,
+            "title": "Install Firebase SDKs and Configure Environment Variables",
+            "description": "Integrate the Firebase SDKs into the Next.js project and securely set up environment variables for Firebase credentials and the OpenAI API key.",
+            "dependencies": [
+              "1.1",
+              "1.3"
+            ],
+            "details": "In the Next.js project directory, run `npm install firebase firebase-admin`. Create a `.env.local` file at the project root. Add the Firebase web app configuration object values (apiKey, authDomain, etc.) from the Firebase console and a placeholder for `OPENAI_API_KEY`.",
+            "status": "done",
+            "testStrategy": "Create a Firebase initialization file (e.g., `lib/firebase.ts`). Attempt to initialize the Firebase app using the environment variables. The application should build and run without credential-related errors."
+          },
+          {
+            "id": 5,
+            "title": "Verify Firestore Connection from Next.js",
+            "description": "Implement a test case to confirm that the Next.js application can successfully communicate with the configured Firestore database.",
+            "dependencies": [
+              "1.4"
+            ],
+            "details": "Create a temporary server component or API route within the Next.js app. Use the initialized Firebase SDK to write a test document (e.g., `{ status: 'ok' }`) to a new 'test-connection' collection in Firestore.",
+            "status": "done",
+            "testStrategy": "Trigger the test logic by visiting the page or API endpoint. Check the Firestore data viewer in the Firebase console to confirm that the 'test-connection' collection and the corresponding document have been created successfully."
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Implement User Authentication with Firebase Auth",
+        "description": "Develop the complete user authentication flow, including email/phone registration, login, and session management using Firebase Authentication.",
+        "details": "Use the Firebase Auth client-side SDK to create UI components for sign-up and login. Implement protected routes using Next.js Middleware to redirect unauthenticated users. Upon successful registration, create a corresponding user document in a 'users' Firestore collection with default values (e.g., `tokenCount: 50`, `isPremium: false`).",
+        "testStrategy": "Unit test authentication components. Manually test the full sign-up, login, and logout flow. Verify that protected routes are inaccessible without logging in. Check Firestore for new user document creation upon registration.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set Up Firebase Project and Integrate SDK",
+            "description": "Create a new Firebase project, configure the web app, and integrate the Firebase client-side SDK into the Next.js application. This includes setting up environment variables for the Firebase configuration.",
+            "dependencies": [],
+            "details": "Create a project in the Firebase console. Enable Firebase Authentication (Email/Password) and Firestore. Copy the Firebase config object into the Next.js project's environment variables. Create a Firebase initialization file (e.g., `lib/firebase.js`) to export the initialized app, auth, and firestore instances.",
+            "status": "done",
+            "testStrategy": "Verify that the application loads without errors and can connect to the Firebase backend by logging a successful initialization message in the browser console."
+          },
+          {
+            "id": 2,
+            "title": "Build Sign-Up and Login UI Components",
+            "description": "Develop the React components for the user registration (sign-up) and login forms using the Firebase Auth SDK, including form state management and error handling.",
+            "dependencies": [
+              "2.1"
+            ],
+            "details": "Create two separate components, `SignUpForm.js` and `LoginForm.js`. Each component will have input fields for email and password. Use the `createUserWithEmailAndPassword` and `signInWithEmailAndPassword` functions from the Firebase Auth SDK to handle form submissions. Display relevant error messages to the user (e.g., 'Email already in use').",
+            "status": "done",
+            "testStrategy": "Manually test the forms to confirm successful sign-up and login attempts by checking the Firebase Authentication console. Verify that appropriate error messages are displayed for invalid inputs."
+          },
+          {
+            "id": 3,
+            "title": "Create Firestore User Document on New Registration",
+            "description": "After a user successfully signs up, create a new document for them in the 'users' Firestore collection with their UID, email, and default values.",
+            "dependencies": [
+              "2.2"
+            ],
+            "details": "Modify the sign-up logic from subtask 2.2. After the `createUserWithEmailAndPassword` call succeeds, use the returned user credential (`user.uid`) to create a new document in the 'users' collection. The document should be set with the fields: `email`, `createdAt: serverTimestamp()`, `tokenCount: 50`, and `isPremium: false`.",
+            "status": "done",
+            "testStrategy": "Register a new user through the UI. Verify in the Firestore console that a new document is created in the 'users' collection with the correct UID and contains all the specified default fields."
+          },
+          {
+            "id": 4,
+            "title": "Implement Global Auth State Management",
+            "description": "Set up a global context or state management solution to listen for changes in the user's authentication state and make the current user object available throughout the application.",
+            "dependencies": [
+              "2.2"
+            ],
+            "details": "Use a React Context provider (`AuthContext`) that wraps the entire application. Inside the provider, use the `onAuthStateChanged` listener from the Firebase Auth SDK. This listener will update the context with the user object when they log in or log out, making session information globally accessible.",
+            "status": "done",
+            "testStrategy": "Log in and navigate between pages; verify that user-specific UI elements (e.g., user email in the header) display correctly. Test the logout functionality and confirm the UI reverts to a logged-out state."
+          },
+          {
+            "id": 5,
+            "title": "Implement Protected Routes with Next.js Middleware",
+            "description": "Create a Next.js middleware file to protect specific routes (e.g., `/dashboard`) from unauthenticated access, redirecting users to the login page if they are not signed in.",
+            "dependencies": [
+              "2.4"
+            ],
+            "details": "Create a `middleware.ts` file in the root or `src` directory. The middleware will check for the Firebase auth token in the request cookies. If the token is missing or invalid, it will redirect the user to the `/login` page. Define the protected paths using the middleware's `matcher` config.",
+            "status": "done",
+            "testStrategy": "Attempt to access a protected route while logged out and verify redirection to the login page. Log in and access the same route to verify successful access."
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Design and Implement Firestore Schema for Token Management",
+        "description": "Create the Firestore database structure for user profiles and the token-based usage system. Implement a secure backend mechanism to decrement user tokens.",
+        "details": "Define the Firestore schema for the 'users' collection: `{ userId: string, email: string, createdAt: timestamp, tokenCount: number, isPremium: boolean }`. Create a Firebase Cloud Function (`decrementToken`) that is callable from the client. This function will atomically decrement the `tokenCount` for the authenticated user in Firestore. Secure this function and Firestore using security rules to ensure users can only modify their own data.",
+        "testStrategy": "Write Firestore security rules tests to prevent unauthorized access. Write a unit test for the `decrementToken` Cloud Function. Manually test by calling the function from the client and verifying the `tokenCount` is correctly decremented in the Firestore console.",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define and Document Firestore 'users' Collection Schema",
+            "description": "Formalize the data structure for the 'users' collection, including data types and constraints. Create corresponding TypeScript interfaces for type safety in the codebase.",
+            "dependencies": [],
+            "details": "Define the schema for the 'users' collection document as `{ userId: string, email: string, createdAt: timestamp, tokenCount: number, isPremium: boolean }`. Create a `User` interface in a shared types file. Document the purpose and validation rules for each field.",
+            "status": "done",
+            "testStrategy": "Review the defined schema and TypeScript interface to ensure they match the project requirements and are well-documented."
+          },
+          {
+            "id": 2,
+            "title": "Implement Firestore Security Rules for User Data",
+            "description": "Write and deploy Firestore security rules to protect the 'users' collection, ensuring users can only read their own document and cannot directly modify critical fields like 'tokenCount'.",
+            "dependencies": [
+              "3.1"
+            ],
+            "details": "Configure rules in `firestore.rules`. Allow authenticated users to read their own document (`/users/{request.auth.uid}`). Disallow all write operations from the client, except for document creation on signup. This forces token modification to happen exclusively through the backend Cloud Function.",
+            "status": "done",
+            "testStrategy": "Use the Firebase Local Emulator Suite to write tests that simulate authenticated users trying to read their own data (should pass) and other users' data (should fail). Test attempts to directly update `tokenCount` (should fail)."
+          },
+          {
+            "id": 3,
+            "title": "Develop 'decrementToken' Callable Cloud Function",
+            "description": "Create the core logic for a callable Firebase Cloud Function that atomically decrements the 'tokenCount' for the authenticated user making the request.",
+            "dependencies": [
+              "3.1"
+            ],
+            "details": "Create a new callable function named `decrementToken`. The function must first verify that the caller is authenticated by checking `context.auth`. It will then get the user's document reference using `context.auth.uid`. Use `FieldValue.increment(-1)` within an update call to ensure the decrement operation is atomic and prevents race conditions. Add logic to prevent the count from going below zero.",
+            "status": "done",
+            "testStrategy": "Write unit tests for the function logic using `firebase-functions-test` and the Firestore emulator. Mock an authenticated user and verify that a successful call results in their `tokenCount` being reduced by exactly one."
+          },
+          {
+            "id": 4,
+            "title": "Deploy and Secure the 'decrementToken' Cloud Function",
+            "description": "Deploy the implemented Cloud Function to the Firebase environment and ensure it is properly secured, allowing invocations only from authenticated application users.",
+            "dependencies": [
+              "3.3"
+            ],
+            "details": "Use the Firebase CLI to deploy the `decrementToken` function. Double-check that the function's code includes the authentication check (`if (!context.auth)`) to throw an 'unauthenticated' error. No special IAM roles are needed for callable functions as they rely on Firebase Auth context.",
+            "status": "done",
+            "testStrategy": "After deployment, perform a manual integration test by calling the function from a simple client-side script or test page as an authenticated user. Verify the `tokenCount` is decremented in the Firestore console. Attempt to call it as an unauthenticated user and verify it fails."
+          },
+          {
+            "id": 5,
+            "title": "Integrate and Test Token Decrement from a Test Client",
+            "description": "Create a simple client-side implementation to call the 'decrementToken' function and verify the end-to-end flow, including security rule enforcement.",
+            "dependencies": [
+              "3.2",
+              "3.4"
+            ],
+            "details": "In the frontend application, use the Firebase SDK to get a reference to the `decrementToken` callable function. Create a temporary button in the UI that, when clicked by a logged-in user, invokes the function. Log the result or any errors to the console.",
+            "status": "done",
+            "testStrategy": "Manually test the end-to-end flow. Log in as a test user. Click the test button and observe the network request. Check the Firestore console to confirm the `tokenCount` has decreased. Check the Cloud Function logs for successful execution. Confirm that unauthenticated calls from the client are rejected."
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Develop AI Message Generation Cloud Function",
+        "description": "Create a secure Firebase Cloud Function to interface with the OpenAI API, handling Hebrew-specific prompts and managing API costs.",
+        "details": "Create an HTTP-triggered Cloud Function (`generateMessage`). This function will: 1. Verify user authentication. 2. Check if the user has enough tokens. 3. Construct a detailed, culturally-aware Hebrew prompt for GPT-4o Mini based on user input (context, tone). 4. Call the OpenAI API. 5. Implement a fallback to GPT-3.5 Turbo on error or for cost-saving. 6. On success, call the `decrementToken` function. 7. Return the generated message to the client. Store OpenAI API key securely in Firebase Function configuration.",
+        "testStrategy": "Unit test the Cloud Function with mock OpenAI API calls and mock user data. Test various Hebrew prompts to evaluate the quality of the generated responses. Verify token decrement logic is triggered correctly. Test error handling for OpenAI API failures and insufficient tokens.",
+        "priority": "high",
+        "dependencies": [
+          3
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Initialize 'generateMessage' Cloud Function and Secure Configuration",
+            "description": "Set up the basic structure for the HTTP-triggered Firebase Cloud Function 'generateMessage'. Securely store the OpenAI API key using Firebase Function configuration to prevent it from being exposed in the source code.",
+            "dependencies": [],
+            "details": "Create the initial TypeScript file for the function. Define the `generateMessage` on-request (HTTP) trigger. Use the Firebase CLI to set the OpenAI API key as a secret or environment variable (`firebase functions:config:set openai.key=...`). Initialize the Firebase Admin and OpenAI SDKs within the function.",
+            "status": "done",
+            "testStrategy": "Deploy the initial function and test its accessibility via its HTTP trigger using a tool like Postman or curl. Verify that the function can successfully load the OpenAI API key from the environment configuration without crashing."
+          },
+          {
+            "id": 2,
+            "title": "Implement User Authentication and Token Validation",
+            "description": "Secure the function by adding logic to verify the user's Firebase Auth token from the request header. After authentication, fetch the user's data from Firestore to check if their 'tokenCount' is sufficient to proceed.",
+            "dependencies": [
+              "4.1"
+            ],
+            "details": "In the function, extract the Bearer token from the 'Authorization' header. Use the `firebase-admin` SDK's `auth().verifyIdToken()` method to validate it. If valid, use the resulting UID to query the 'users' collection in Firestore. Return a 401 Unauthorized error for invalid/missing tokens and a 402 Payment Required error if `tokenCount` is zero.",
+            "status": "done",
+            "testStrategy": "Unit test the function with mock request headers containing valid, invalid, and missing auth tokens to ensure correct error responses. Test with a mock Firestore user having zero tokens to verify the 402 error is returned."
+          },
+          {
+            "id": 3,
+            "title": "Construct Hebrew Prompt and Integrate with OpenAI GPT-4o Mini",
+            "description": "Develop the core logic to construct a detailed, culturally-aware Hebrew prompt based on user inputs. Implement the primary API call to OpenAI's GPT-4o Mini model to generate the message.",
+            "dependencies": [
+              "4.2"
+            ],
+            "details": "Create a prompt engineering module that takes user-provided `context` and `tone` from the request body. This module will generate a system prompt and a user prompt tailored for high-quality Hebrew responses. Use the `openai` Node.js library to make an API request to the `gpt-4o-mini` model with the constructed prompt.",
+            "status": "done",
+            "testStrategy": "Unit test the prompt construction logic with various Hebrew inputs to ensure it produces well-formed and contextually appropriate prompts. Use a mock OpenAI client to verify that the API is called with the correct model and payload."
+          },
+          {
+            "id": 4,
+            "title": "Implement Fallback to GPT-3.5 Turbo and Error Handling",
+            "description": "Add robust error handling for the primary OpenAI API call. On failure (e.g., API error, timeout), implement a fallback mechanism to call the more cost-effective GPT-3.5 Turbo model as a backup.",
+            "dependencies": [
+              "4.3"
+            ],
+            "details": "Wrap the GPT-4o Mini API call in a `try...catch` block. In the `catch` block, log the specific error for debugging purposes and then initiate a second API call to the `gpt-3.5-turbo` model using the same prompt. If both API calls fail, return a 500 Internal Server Error to the client.",
+            "status": "done",
+            "testStrategy": "Mock the GPT-4o Mini API call to throw an error and assert that the function correctly proceeds to call the GPT-3.5 Turbo model. Write a separate test case where both mocked API calls fail to ensure the final 500 error is returned."
+          },
+          {
+            "id": 5,
+            "title": "Decrement User Tokens and Finalize Client Response",
+            "description": "Upon a successful message generation from either OpenAI model, invoke the 'decrementToken' function to update the user's token balance in Firestore. Format and return the generated message to the client.",
+            "dependencies": [
+              "4.4"
+            ],
+            "details": "After receiving a valid response from OpenAI, call the `decrementToken` Cloud Function (as defined in Task 3) or implement an atomic decrement operation on the user's document directly within this function. Structure the successful response as `{ success: true, message: '...' }` and return it to the client with a 200 OK status.",
+            "status": "done",
+            "testStrategy": "Using a mock successful OpenAI response, verify that the logic to decrement the user's token count in Firestore is triggered correctly. Check that the final JSON response sent to the client is well-formed and contains the generated message."
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Build Core Message Generation UI with shadcn/ui",
+        "description": "Create the main user interface in Next.js where users can input conversation context, select a tone, and receive AI-generated suggestions, ensuring a mobile-first and RTL design.",
+        "details": "Use Next.js App Router to create the main page. Utilize shadcn/ui components like `Textarea` for context input, `Select` for tone (casual, romantic, humorous), `Button` for generation, and `Card` to display results. Use Zustand for client-side state management (input, loading state, response). Ensure the layout is fully responsive and optimized for mobile screens with proper Hebrew (RTL) text alignment and flow.",
+        "testStrategy": "Perform component testing with Storybook or similar. Conduct manual UI/UX testing on various mobile and desktop screen sizes. Verify that the RTL layout is correct and there are no visual bugs. Test form input and state management logic.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Setup Next.js Page and Core shadcn/ui Components",
+            "description": "Create the main page for the message generator using the Next.js App Router. Install and configure shadcn/ui, then add the essential components (`Textarea`, `Select`, `Button`, `Card`) to establish the basic UI structure.",
+            "dependencies": [],
+            "details": "Initialize a new page route (e.g., `/`). Use `npx shadcn-ui@latest init` and `add` commands to bring in the required components. Lay out the components semantically on the page with placeholders for content and functionality.",
+            "status": "done",
+            "testStrategy": "Verify that the page renders without errors and that the default styles of the shadcn/ui components are applied correctly."
+          },
+          {
+            "id": 2,
+            "title": "Implement Client-Side State Management with Zustand",
+            "description": "Create a Zustand store to manage all client-side state for the UI. This includes the user's text input, the selected tone, the loading status during API calls, and the resulting message suggestions.",
+            "dependencies": [
+              "5.1"
+            ],
+            "details": "Define a Zustand store with state variables for `context: string`, `tone: string`, `isLoading: boolean`, and `suggestions: string[]`. Implement actions to update each piece of state, such as `setContext`, `setTone`, `setLoading`, and `setSuggestions`.",
+            "status": "done",
+            "testStrategy": "Write unit tests for the Zustand store to ensure actions correctly modify the state. Use browser developer tools to inspect the store's state in real-time."
+          },
+          {
+            "id": 3,
+            "title": "Connect UI Components to Zustand State",
+            "description": "Wire the shadcn/ui components to the Zustand store to create an interactive form. User actions in the UI should update the store, and changes in the store should be reflected in the UI.",
+            "dependencies": [
+              "5.1",
+              "5.2"
+            ],
+            "details": "Use the Zustand hook within the page component. Bind the `Textarea`'s value and `onInput` to the `context` state. Link the `Select` component to the `tone` state. The `Button`'s `disabled` attribute should be tied to the `isLoading` state. The `Card` components will be rendered by mapping over the `suggestions` array.",
+            "status": "done",
+            "testStrategy": "Manually test the form. Confirm that typing in the textarea updates the store. Verify that changing the tone selection updates the store. Check that the button's state changes when `isLoading` is toggled."
+          },
+          {
+            "id": 4,
+            "title": "Implement API Call Logic to Generation Endpoint",
+            "description": "Develop the client-side function that will be triggered by the 'Generate' button. This function will call the backend Firebase Cloud Function, manage the loading state, and handle the response or any errors.",
+            "dependencies": [
+              "5.3"
+            ],
+            "details": "Create an async function for the `Button`'s `onClick` event. Inside, set `isLoading` to true. Use the Firebase SDK to call the `generateMessage` HTTPS callable function, passing the `context` and `tone` from the store. In the `try/catch/finally` block, update the `suggestions` state on success, handle errors appropriately, and set `isLoading` back to false.",
+            "status": "done",
+            "testStrategy": "Test the API call against a mock or development version of the cloud function. Verify that the `isLoading` state is managed correctly throughout the request lifecycle. Test the error handling path by simulating a failed API response."
+          },
+          {
+            "id": 5,
+            "title": "Apply Mobile-First, Responsive, and RTL Styling",
+            "description": "Refine the UI using Tailwind CSS to ensure it is mobile-first and fully responsive across all screen sizes. Implement and verify Right-to-Left (RTL) styling for proper Hebrew language support.",
+            "dependencies": [
+              "5.3"
+            ],
+            "details": "Use Tailwind's responsive prefixes (e.g., `sm:`, `md:`) to adapt the layout for tablets and desktops. Set `dir=\"rtl\"` on a parent element to enable RTL mode. Use logical CSS properties (e.g., `ms-4` for `margin-start`) to ensure the layout flips correctly. Test all components, especially text inputs and alignment, with Hebrew text.",
+            "status": "done",
+            "testStrategy": "Perform manual UI testing using browser developer tools to simulate different device sizes. Test on a physical mobile device. Enter Hebrew text into all inputs to confirm correct text alignment and layout flow in RTL mode."
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Integrate Frontend UI with Backend Services",
+        "description": "Connect the message generation UI to the Firebase authentication and AI generation Cloud Function, creating a seamless end-to-end user experience.",
+        "details": "In the Next.js frontend, implement the logic to call the `generateMessage` Cloud Function when the user clicks the generate button. Pass the authentication token in the request header. Handle the function's response, displaying the generated message or an error notification. Implement loading states to provide user feedback, aiming for a <3 second response time.",
+        "testStrategy": "Perform integration testing of the full flow: user logs in, enters context, clicks generate, sees a loading state, and receives a message. Verify that the user's token count is updated in the UI after a successful generation. Test edge cases like network errors or invalid inputs.",
+        "priority": "high",
+        "dependencies": [
+          4,
+          5
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create API Service for Cloud Function Communication",
+            "description": "Develop a dedicated client-side service or utility function in the Next.js app to handle the HTTP POST request to the `generateMessage` Cloud Function.",
+            "dependencies": [],
+            "details": "This service will encapsulate the `fetch` or `axios` logic for calling the backend. It should accept user input (context, tone) as arguments and be configured to use the Cloud Function's URL from environment variables. It will be responsible for constructing the request body and headers.",
+            "status": "done",
+            "testStrategy": "Unit test the service function to ensure it correctly constructs the request URL, body, and headers. Mock the fetch call to verify its behavior without hitting the actual endpoint."
+          },
+          {
+            "id": 2,
+            "title": "Implement Firebase Auth Token Retrieval",
+            "description": "Integrate logic to get the currently authenticated user's ID token from the Firebase Auth SDK to be used for authorizing API requests.",
+            "dependencies": [],
+            "details": "Create a reusable hook or function that accesses the `currentUser` from the Firebase Auth context and calls `getIdToken()`. This function will provide the Bearer token needed for authenticated requests. It should handle the case where no user is signed in.",
+            "status": "done",
+            "testStrategy": "In a test environment, simulate a logged-in user and verify that the function successfully returns a mock JWT token. Test the scenario where the user is not logged in to ensure it fails gracefully."
+          },
+          {
+            "id": 3,
+            "title": "Wire UI 'Generate' Button to Trigger Authenticated API Call",
+            "description": "Connect the `onClick` event of the 'Generate' button to orchestrate the API call, including fetching the auth token and setting loading states.",
+            "dependencies": [
+              "6.1",
+              "6.2"
+            ],
+            "details": "In the message generation component, create an event handler for the button. This handler will first set a 'loading' state to true, then call the function from subtask 2 to get the auth token, and finally invoke the API service from subtask 1, passing the user's input and the token in the `Authorization` header.",
+            "status": "done",
+            "testStrategy": "Manually test the UI to confirm that clicking the button triggers the network request. Use browser developer tools to inspect the outgoing request and verify that the `Authorization` header is present and correctly formatted."
+          },
+          {
+            "id": 4,
+            "title": "Implement UI Loading State and Feedback",
+            "description": "Manage and display a loading state in the UI to provide feedback to the user while the AI message is being generated.",
+            "dependencies": [
+              "6.3"
+            ],
+            "details": "Use a state management solution like Zustand to track an `isLoading` boolean. When the API call is initiated, set `isLoading` to true. While true, disable the 'Generate' button and display a visual indicator, such as a spinner or a pulsating animation. Set `isLoading` to false once the request resolves or fails.",
+            "status": "done",
+            "testStrategy": "Visually inspect the UI to confirm that the loading indicator appears upon clicking the button and disappears when the network response is received. Verify that the button is disabled during the loading state to prevent multiple submissions."
+          },
+          {
+            "id": 5,
+            "title": "Handle and Display API Response or Error",
+            "description": "Process the response from the Cloud Function, displaying either the successfully generated message or a user-friendly error notification.",
+            "dependencies": [
+              "6.4"
+            ],
+            "details": "Extend the API call logic to handle both successful and failed responses. On success, update the component's state with the generated message and render it in the designated UI area (e.g., a `Card`). On failure, capture the error and display a notification (e.g., a toast message) informing the user what went wrong.",
+            "status": "done",
+            "testStrategy": "Perform integration testing. For the success case, verify the generated text appears correctly. For the error case, simulate a failed API response (e.g., using network throttling or a mock error) and confirm that the error notification is displayed as expected."
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Implement Frontend Token Tracking and Upgrade Flow",
+        "description": "Display the user's remaining token count and implement the UI flow for when they run out of tokens, guiding them to the subscription page.",
+        "details": "Fetch the user's `tokenCount` from their Firestore document and display it clearly in the UI header or user profile section. Use a Firestore real-time listener to keep the count updated. When `tokenCount` is low (e.g., <= 10), show a non-intrusive warning. When `tokenCount` is 0, disable the generation button and display a modal or banner prompting the user to upgrade to premium.",
+        "testStrategy": "Manually test the UI by setting different `tokenCount` values in Firestore. Verify the counter updates in real-time. Confirm that the generation button is disabled at 0 tokens and the upgrade prompt appears as expected.",
+        "priority": "medium",
+        "dependencies": [
+          6
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set Up Real-time Firestore Listener for User Token Count",
+            "description": "Create a custom React hook or service that subscribes to the authenticated user's document in Firestore. This service will listen for real-time updates to the `tokenCount` field and provide the current count to the application's global state.",
+            "dependencies": [],
+            "details": "Utilize the `onSnapshot` method from the Firebase SDK to listen for changes. Ensure the listener is properly attached upon user authentication and detached on logout to prevent memory leaks. Integrate the fetched token count into a global state management solution like Zustand or React Context for easy access across components.",
+            "status": "pending",
+            "testStrategy": "Manually update the `tokenCount` value for a logged-in user directly in the Firestore console. Verify that the application's state and any bound UI elements update in real-time without a page refresh."
+          },
+          {
+            "id": 2,
+            "title": "Create and Integrate Token Counter UI Component",
+            "description": "Develop a reusable UI component to display the user's remaining token count in the application header or user profile section. This component will consume the token count data from the global state.",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "Use a shadcn/ui component like `Badge` or a custom element to display the count. Place the component in a globally visible area, such as the main navigation bar. The component should automatically re-render whenever the token count in the global state changes.",
+            "status": "pending",
+            "testStrategy": "Confirm the component correctly displays the initial token count on login. After an action that consumes a token, verify the displayed number decrements instantly."
+          },
+          {
+            "id": 3,
+            "title": "Implement Low Token Warning Notification",
+            "description": "Implement a non-intrusive UI warning that alerts the user when their token count drops to a predefined low threshold (e.g., 10 or fewer).",
+            "dependencies": [
+              "7.2"
+            ],
+            "details": "Use conditional logic based on the token count from the global state. When `tokenCount <= 10` and `tokenCount > 0`, trigger a visual indicator. This could be changing the color of the token counter component to yellow/orange or displaying a temporary toast notification using a library like `sonner`.",
+            "status": "pending",
+            "testStrategy": "Set the user's `tokenCount` in Firestore to 11, then 10, then 5. Verify that the warning UI appears only when the count is 10 or less and is not present at 11."
+          },
+          {
+            "id": 4,
+            "title": "Implement 'Out of Tokens' UI State and Upgrade Modal",
+            "description": "Handle the UI state for when the token count reaches zero by disabling the message generation functionality and displaying a modal that prompts the user to upgrade their plan.",
+            "dependencies": [
+              "7.1"
+            ],
+            "details": "Conditionally add the `disabled` attribute to the 'Generate' button in the message generation UI when `tokenCount` is 0. Trigger a `Dialog` component from shadcn/ui to open automatically. This modal should clearly state the user is out of tokens and provide a primary call-to-action button linking to the subscription page.",
+            "status": "pending",
+            "testStrategy": "Set `tokenCount` to 0 in Firestore. Verify the 'Generate' button is visually disabled and non-interactive. Confirm the 'Upgrade' modal appears as expected and that its CTA button navigates to the correct URL."
+          },
+          {
+            "id": 5,
+            "title": "Add Analytics for Token Depletion and Upgrade CTA",
+            "description": "Integrate analytics event tracking for key actions within the token upgrade flow to monitor user behavior and conversion funnels.",
+            "dependencies": [
+              "7.4"
+            ],
+            "details": "When the application logic first detects that the `tokenCount` has reached 0, fire an analytics event named `ran_out_of_tokens`. Additionally, fire an `upgrade_cta_clicked` event when the user clicks the upgrade button inside the 'Out of Tokens' modal. Use the analytics service specified in the project context (e.g., Vercel Analytics).",
+            "status": "pending",
+            "testStrategy": "Use browser developer tools to monitor network requests or the analytics provider's debug view. Set `tokenCount` to 1, perform an action to consume it, and verify the `ran_out_of_tokens` event is fired. Click the upgrade button in the modal and confirm the `upgrade_cta_clicked` event is fired."
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Set Up Response Caching with Redis or Firestore",
+        "description": "Implement a caching mechanism to reduce latency and OpenAI API costs for common requests, as specified in the performance optimization requirements.",
+        "details": "Modify the `generateMessage` Cloud Function. Before calling the OpenAI API, create a cache key by hashing the input context and tone. Check a Redis instance (if using Node.js on Railway/DO) or a dedicated Firestore `cachedResponses` collection for this key. If a valid (e.g., <24 hours old) entry exists, return the cached response. Otherwise, call the OpenAI API and store the new response in the cache with a TTL.",
+        "testStrategy": "Write a unit test to verify that the function first checks the cache. Manually test by sending the same request twice; the second request should be significantly faster and not trigger a new OpenAI API call (verify via logs). Check that cache entries expire correctly.",
+        "priority": "medium",
+        "dependencies": [
+          4
+        ],
+        "status": "pending",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Configure Caching Service Connection",
+            "description": "Choose between Redis and Firestore for caching. Set up the chosen service and configure the necessary environment variables and SDK clients within the Google Cloud Function environment.",
+            "dependencies": [],
+            "details": "If using Redis, provision an instance and add the connection URL to the environment variables. If using Firestore, create a new collection named `cachedResponses` and initialize the Firestore Admin SDK in the `generateMessage` function. Ensure security rules for the new collection restrict access to the backend service account only.",
+            "status": "pending",
+            "testStrategy": "Verify that the Cloud Function can successfully connect to the chosen service by adding a temporary log statement on initialization. For Firestore, confirm the `cachedResponses` collection is created in the console."
+          },
+          {
+            "id": 2,
+            "title": "Implement Cache Key Generation Logic",
+            "description": "Create a deterministic function to generate a unique cache key based on the request's input context and tone.",
+            "dependencies": [],
+            "details": "Within the `generateMessage` function's scope, create a helper function that takes the `context` and `tone` strings as input. It should normalize the inputs (e.g., trim whitespace, convert to lowercase) and then use a standard hashing algorithm like SHA-256 to produce a consistent hash string to be used as the cache key.",
+            "status": "pending",
+            "testStrategy": "Write a simple unit test for the key generation function to ensure that identical inputs always produce the same hash, and different inputs produce different hashes."
+          },
+          {
+            "id": 3,
+            "title": "Integrate Cache Read Logic into Cloud Function",
+            "description": "Modify the `generateMessage` function to check the cache for a valid response before calling the OpenAI API.",
+            "dependencies": [
+              "8.1",
+              "8.2"
+            ],
+            "details": "At the beginning of the function execution, generate the cache key using the logic from subtask 8.2. Query the configured cache service (Redis GET or Firestore getDoc) with this key. If a document is found, check its timestamp. If it's less than 24 hours old, return the cached response directly and terminate the function's execution.",
+            "status": "pending",
+            "testStrategy": "Manually add an entry to the cache. Call the function with the corresponding input and verify via logs that it returns the cached data and does not proceed to the OpenAI API call."
+          },
+          {
+            "id": 4,
+            "title": "Implement Cache Write Logic on OpenAI Success",
+            "description": "After receiving a new response from the OpenAI API, store it in the cache for future use.",
+            "dependencies": [
+              "8.3"
+            ],
+            "details": "In the code block that handles a successful response from the OpenAI API, add logic to write the result to the cache. The cache entry should be stored against the generated key. The stored value should be the API response content along with a `createdAt` timestamp (e.g., `Date.now()` or a Firestore `serverTimestamp()`). For Redis, set a TTL of 86400 seconds (24 hours).",
+            "status": "pending",
+            "testStrategy": "Call the function with a new, uncached input. Verify via the Redis CLI or Firestore console that a new cache entry is created with the correct key, content, and a recent timestamp."
+          },
+          {
+            "id": 5,
+            "title": "Test and Validate End-to-End Caching Flow",
+            "description": "Perform comprehensive testing to ensure the entire caching mechanism functions as expected, including cache hits, misses, and expiration.",
+            "dependencies": [
+              "8.4"
+            ],
+            "details": "Execute the manual test plan: send the same request twice. The first request should be slower and log an 'OpenAI API call' message. The second request should be significantly faster and log a 'Cache hit' message. To test expiration, manually set a cache entry's timestamp to be older than 24 hours and verify that the next request results in a cache miss and a new OpenAI API call.",
+            "status": "pending",
+            "testStrategy": "Follow the detailed manual test plan. Monitor Cloud Function logs and the cache database (Redis/Firestore) to confirm the expected behavior for cache hits, misses, and TTL/expiration logic."
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Integrate Google AdSense for Monetization",
+        "description": "Integrate Google AdSense display ads into the application for users on the free tier to generate secondary revenue.",
+        "details": "Apply for a Google AdSense account. Once approved, add the AdSense script to the root layout file in Next.js. Create a reusable `AdComponent`. In the UI, use conditional rendering based on the user's `isPremium` status (fetched from Firestore) to display ad units only for free-tier users. Place ads in non-disruptive locations, such as a sidebar or below the message results.",
+        "testStrategy": "Verify that the AdSense script loads correctly. Confirm that ads are displayed for free users and are hidden for premium users. Test on different screen sizes to ensure ads do not break the layout. Monitor the AdSense dashboard for impressions.",
+        "priority": "low",
+        "dependencies": [
+          7
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Implement Analytics and Prepare for Beta Launch",
+        "description": "Integrate analytics to track key KPIs and perform final optimizations before deploying for the beta test with 50 users.",
+        "details": "Integrate Vercel Analytics or a similar service. Implement event tracking for key user actions: `user_signup`, `message_generated`, `ran_out_of_tokens`, `upgrade_cta_clicked`. Perform a performance audit using Lighthouse to ensure the initial bundle size is <2MB. Set up structured logging in Cloud Functions for easier debugging. Create a deployment pipeline for Vercel or Firebase Hosting.",
+        "testStrategy": "Use browser developer tools to confirm that analytics events are being fired correctly. Run Lighthouse reports to check performance scores. Perform a final round of end-to-end testing covering all MVP features. Deploy to a staging environment and test before the beta launch.",
+        "priority": "medium",
+        "dependencies": [
+          8,
+          9
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-09-26T16:01:08.403Z",
+      "updated": "2025-09-27T10:23:28.789Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
