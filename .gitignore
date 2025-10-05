@@ -23,5 +23,8 @@ node_modules/
 *.sln
 *.sw?
 
+# Cursor configuration
+.cursor/mcp.json
+
 # OS specific
 .DS_Store
