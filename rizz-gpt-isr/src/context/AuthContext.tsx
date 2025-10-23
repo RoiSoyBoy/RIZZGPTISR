@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { isUsingEmulators } from "@/lib/firebase";
 
 interface AuthContextType {
   user: User | null;
@@ -20,13 +21,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      console.log("AuthContext: Auth state changed, user:", !!user, user?.email);
       setUser(user);
       setLoading(false);
 
-      if (user) {
-        const token = await user.getIdToken();
-        document.cookie = `firebaseIdToken=${token}; path=/; max-age=604800`; // 1 week
-      } else {
+      // Only set token in production, emulator doesn't generate real tokens
+      if (user && !isUsingEmulators()) {
+        try {
+          const token = await user.getIdToken();
+          document.cookie = `firebaseIdToken=${token}; path=/; max-age=604800`; // 1 week
+        } catch (error) {
+          console.error("Failed to get ID token:", error);
+        }
+      } else if (!user) {
         document.cookie =
           "firebaseIdToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
       }

@@ -27,4 +27,8 @@ if (process.env.NEXT_PUBLIC_USE_EMULATORS === 'true') {
   connectFunctionsEmulator(functions, "127.0.0.1", 5001);
 }
 
+export const isUsingEmulators = () => {
+  return process.env.NEXT_PUBLIC_USE_EMULATORS === 'true';
+};
+
 export { app, auth, db, functions };

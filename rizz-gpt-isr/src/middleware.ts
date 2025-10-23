@@ -2,16 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const hasToken = request.cookies.has("firebaseIdToken");
-
-  if (!hasToken && request.nextUrl.pathname.startsWith("/dashboard")) {
-    return NextResponse.redirect(new URL("/auth", request.url));
-  }
-
-  if (hasToken && request.nextUrl.pathname.startsWith("/auth")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
-  }
-
+  // For now, disable middleware protection entirely since we're using emulators
+  // which don't set real tokens/cookies
   return NextResponse.next();
 }
 

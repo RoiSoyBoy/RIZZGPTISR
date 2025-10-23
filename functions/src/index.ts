@@ -3,7 +3,17 @@ import { setGlobalOptions } from "firebase-functions/v2";
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 
 // Initialize Firebase Admin SDK
-admin.initializeApp();
+// Use emulator when running locally, production otherwise
+if (process.env.FIREBASE_PROJECT_ID === "demo-project-id") {
+  // Emulator configuration
+  admin.initializeApp({
+    projectId: "demo-project-id",
+    credential: admin.credential.applicationDefault()
+  });
+} else {
+  // Production configuration
+  admin.initializeApp();
+}
 
 setGlobalOptions({ maxInstances: 10 });
 
